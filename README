@@ -1,0 +1,37 @@
+ASG3
+CMPS104A
+
+Files Submitted:
+astree.cpp
+astree.h
+auxlib.cpp
+auxlib.h
+lyutils.cpp
+lyutils.h
+main.cpp
+main.h
+Makefile
+Makefile.dep
+parser.y
+PARTNER
+README
+scanner.l
+string_set.cpp
+string_set.h
+
+Pair Programming:
+This program was completed using pair programming.
+Partner: Eric Vin (evin@ucsc.edu)
+Partner: Tyler Hoang (tydhoang@ucsc.edu)
+We acknowledge that each partner in a programming pair is
+responsible for the work performed by the other partner,
+and has been reviewed by both partners working together.
+Eric Vin spent 0 hours working alone.
+Tyler Hoang spent 0 hours working alone.
+We spent 16 hours working together.
+Eric Vin spent 8 hours driving.
+Tyler Hoang spent 8 hours driving.
+
+Tyler Hoang (tydhoang) has submitted the project for grading.
+
+
