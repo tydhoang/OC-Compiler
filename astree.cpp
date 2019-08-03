@@ -1,17 +1,16 @@
 /*
-* CMPS104A
 * Created by:
 *  Tyler Hoang (tydhoang@ucsc.edu)
 *  Eric Vin (evin@ucsc.edu)
 * astree.cpp
 */
+
 #include <assert.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "astree.h"
 #include "string_set.h"
 #include "lyutils.h"
@@ -19,11 +18,6 @@
 astree::astree (int symbol_, const location& lloc_, const char* info) {
    symbol = symbol_;
    lloc = lloc_;
-
-   /*
-   printf("%d  %s\n", symbol_, info);
-   */
-
    lexinfo = string_set::intern (info);
    // vector defaults to empty -- no children
 }

@@ -1,7 +1,18 @@
-ASG3
-CMPS104A
+/************************************************************
+* README
+* Tyler Hoang
+* Eric Vin
+************************************************************/
 
-Files Submitted:
+Pair Programming:
+This program was completed using pair programming.
+Partner: Eric Vin (evin@ucsc.edu)
+Partner: Tyler Hoang (tydhoang@ucsc.edu)
+We acknowledge that each partner in a programming pair is
+responsible for the work performed by the other partner,
+and has been reviewed by both partners working together.
+
+Required Files:
 astree.cpp
 astree.h
 auxlib.cpp
@@ -11,27 +22,173 @@ lyutils.h
 main.cpp
 main.h
 Makefile
-Makefile.dep
+oclib.cpp
+oclib.h
+oilconvert.cpp
+oilconvert.h
 parser.y
 PARTNER
 README
 scanner.l
 string_set.cpp
 string_set.h
+symtable.cpp
+symtable.h
+yylex.cpp
+yyparse.cpp
+yyparse.h
 
-Pair Programming:
-This program was completed using pair programming.
-Partner: Eric Vin (evin@ucsc.edu)
-Partner: Tyler Hoang (tydhoang@ucsc.edu)
-We acknowledge that each partner in a programming pair is
-responsible for the work performed by the other partner,
-and has been reviewed by both partners working together.
-Eric Vin spent 0 hours working alone.
-Tyler Hoang spent 0 hours working alone.
-We spent 16 hours working together.
-Eric Vin spent 8 hours driving.
-Tyler Hoang spent 8 hours driving.
+*************************************************************
+Usage: oc [-ly] [-@ flag . . .] [-D string] program.oc
+*************************************************************
 
-Tyler Hoang (tydhoang) has submitted the project for grading.
+The name of the compiler is oc and the file extension for programs written in this
+language will be .oc as well. Option letters are given with the usual Unix syntax.
+All debugging output is printed to the standard error and each component of the
+compiler produces an output file.
 
+The String Set:
+The string set operates as a hash table with the interface in the file called
+string_set.h and the implementation in string_set.cpp.The purpose of the string 
+set is to keep tracks of strings in a unique manner. For example, if the string 
+"abc" is entered multiple times, it appears only once in the table.
 
+String Set sample output:
+hash[ 3]: 2586491021746226264 0x2067528->"teststring"
+12271277041006505511 0x2067288->"main.o"
+hash[ 13]: 18201842504327843073 0x2067198->"Makefile"
+load_factor = 0.522
+bucket_count = 23
+max_bucket_size = 2
+
+The Scanner:
+The scanner is written in flex, which is used to generate yylex.cpp
+The oc language has the following tokens :
+(a) Special symbols :
++ - * / % = == != < <= > >= -> , ; ( ) [ ] { }
+
+Single-character tokens may be represented by their ASCII values, but multiple-
+character tokens must be represented by a bison-generated set of names.
+
+(b) Reserved words :
+if else while return alloc nullptr not
+int string struct array ptr void
+
+Reserved words are added to the scanner as patterns, but precede
+recognition of identifiers.
+
+(c) Identifiers are any sequence of upper- or lower-case ASCII letters, digits, and
+underscores, but may not begin with a digit. ISO-8859 characters beyond
+ASCII are not recognized, nor are Unicode characters.
+
+(d) Decimal integer constants which consist of any sequence of one or more decimal
+digits, not beginning with a 0. Octal integer constants begin with a digit 0
+and are followed by zero or more octal digits. Hexadecimal integer constants
+begin with the sequence 0x or 0X and are followed by one or more hexadecimal
+digits, with the alphabetic digits accepting either upper- or lower-case.
+
+(e) Character constants consist of a pair of single quote marks with a single character
+or escape between them :
+(’([^\\’\n]|\\[\\’"0nt])’)
+
+(f) String constants consist of a pair of double quote marks with zero or more
+characters or escapes between them :
+(\"([^\\"\n]|\\[\\’"0nt])*\")
+
+Scanner sample output:
+# 16 "foobar.oc"
+2 16.003 264 KW_RETURN return
+2 16.010 61 ’=’ =
+2 20.008 258 IDENT hello
+2 20.010 271 LIT_INT 1234
+2 25.002 123 ’{’ {
+2 26.008 272 LIT_STRING "beep"
+
+The Parser:
+The context-free grammar of oc is as follows:
+program -> [ structdef | vardecl | function ] . . .
+structdef -> ‘struct’ IDENT ‘{’ [ type IDENT ‘;’ ] . . . ‘}’ ‘;’
+type -> plaintype | ‘array’ ‘<’ plaintype ‘>’
+plaintype -> ‘void’ | ‘int’ | ‘string’ | ‘ptr’ ‘<’ ‘struct’ IDENT ‘>’
+function -> type IDENT ‘(’ [ type IDENT [ ‘,’ type IDENT ] . . . ] ‘)’ block
+block -> ‘{’ [ statement ] . . . ‘}’ | ‘;’
+statement -> vardecl | block | while | ifelse | return | expr ‘;’
+vardecl -> type IDENT [ ‘=’ expr ] ‘;’
+while -> ‘while’ ‘(’ expr ‘)’ statement
+ifelse -> ‘if’ ‘(’ expr ‘)’ statement [ ‘else’ statement ]
+return -> ‘return’ [ expr ] ‘;’
+expr -> expr BINOP expr | UNOP expr | allocator
+| call | ‘(’ expr ‘)’ | variable | constant
+allocator -> ‘alloc’ ‘<’ ‘string’ ‘>’ ‘(’ expr ‘)’
+| ‘alloc’ ‘<’ ‘struct’ IDENT ‘>’ ‘(’ ‘)’
+| ‘alloc’ ‘<’ ‘array’ ‘<’ plaintype ‘>’ ‘>’ ‘(’ expr ‘)’
+call -> IDENT ‘(’ [ expr [ ‘,’ expr ] . . . ] ‘)’
+variable -> IDENT | expr ‘[’ expr ‘]’ | expr ‘->’ IDENT
+constant -> INTCON | CHARCON | STRINGCON | ‘nullptr’
+The parser output is the abstract syntax tree of a program.
+
+Parser Sample Output:
+ROOT "" 5.0.0
+| FUNCTION "" 5.1.0
+| | INT "int" 5.1.0
+| | | IDENT "fac" 5.1.4
+| | PARAM "(" 5.1.8
+| | | TYPE_ID "" 5.1.9
+| | | INT "int" 5.1.9
+| | | IDENT "n" 5.1.13
+| | BLOCK "{" 5.1.15
+| | | TYPE_ID "" 5.2.3
+| | | | INT "int" 5.2.3
+| | | | IDENT "f" 5.2.7
+| | | | INTCON "1" 5.2.9
+| | | WHILE "while" 5.3.3
+| | | | GT ">" 5.3.10
+| | | | | IDENT "n" 5.3.8
+| | | | | INTCON "1" 5.3.12
+| | | | BLOCK "{" 5.3.14
+| | | | | ’=’ "=" 5.4.8
+| | | | | | IDENT "f" 5.4.6
+| | | | | | ’*’ "*" 5.4.12
+| | | | | | | IDENT "f" 5.4.10
+| | | | | | | IDENT "n" 5.4.12
+| | | | | ’=’ "=" 5.5.8
+| | | | | | IDENT "n" 5.5.6
+| | | | | | ’-’ "-" 5.5.12
+| | | | | | | IDENT "n" 5.5.10
+| | | | | | | INTCON "1" 5.5.12
+| | | RETURN "return" 5.7.3
+| | | | IDENT "f" 5.7.10
+
+The Symbol Tables:
+Symbols in oc are all identifiers, since there is no possibility of user-overloading of
+operators. The symbol table maintains multiple symbol tables, for function and variable 
+names, for type names, and for fields of structures.
+
+Sample Input:
+struct node {
+	int foo;
+	ptr <struct node> link;
+	};
+ptr <struct node> func (ptr <struct node> head, int length) {
+	int a = 0;
+	string b = "";
+	ptr <struct node> c = alloc <struct node>();
+	if (a < 3) {
+		a = length;
+		c = c->link;
+	}else {
+		if (0 == 0) a = 8;
+			else b = "foo";
+	}
+}
+
+Sample Symbol Table Output:
+node (0.1.7) {0} struct node
+	foo (0.2.7) int field 0
+	link (0.3.8) struct node field 1
+func (0.5.5) {0} ptr <struct node> function
+	head (0.5.16) {1} ptr <struct node> variable lval param 0
+	length (0.5.24) {1} int variable lval param 1
+	a (0.6.7) {1} int variable lval local 0
+	b (0.7.10) {1} string variable lval local 1
+	c (0.8.8) {1} ptr <struct node> variable lval local 2

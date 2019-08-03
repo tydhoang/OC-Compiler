@@ -1,6 +1,5 @@
 /*
 * CMPS104A
-* Created by:
 *  Tyler Hoang (tydhoang@ucsc.edu)
 *  Eric Vin (evin@ucsc.edu)
 * lyutils.cpp

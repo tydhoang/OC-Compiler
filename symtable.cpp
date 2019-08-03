@@ -1,5 +1,4 @@
 /*
-* CMPS104A
 * Created by:
 *  Tyler Hoang (tydhoang@ucsc.edu)
 *  Eric Vin (evin@ucsc.edu)
@@ -348,16 +347,7 @@ void crawl_tree(FILE* outfile, astree* tree) {
       blockNum++;
       fprintf(outfile, "\n");
     } 
-    //Access tokens
-    else if(strcmp(tokenName, "TOK_IDENT") == 0) {
-        std::cout << "TOK_IDENT" << std::endl;
-    } else if(strcmp(tokenName, "TOK_ARROW") == 0) {
-        std::cout << "TOK_ARROW" << std::endl;
-    } else if(strcmp(tokenName, "TOK_CALL") == 0) {
-      std::cout << "TOK_CALL" << std::endl;
-    } else if(strcmp(tokenName, "TOK_INDEX") == 0) {
-      std::cout << "TOK_INDEX" << std::endl;
-    } else {
+    else {
         //Recurses on all children from left to right if non symbol token reached
         for(unsigned int childNum = 0; childNum < tree->children.size(); childNum++) {
             crawl_tree(outfile, tree->children[childNum]);
@@ -376,5 +366,3 @@ symbol* new_symbol(astree* node) { //not for functions
   return sym;
   
 }
-
-//maybe//
